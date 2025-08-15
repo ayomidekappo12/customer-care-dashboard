@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 const config: Config = {
-  darkMode: "class",
+  darkMode: "class", // Enable class-based dark mode
   content: [
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{ts,tsx}",
@@ -22,106 +23,67 @@ const config: Config = {
     },
     extend: {
       colors: {
-        success: "#517D55",
-        "success-green": "oklch(var(--success-green) / <alpha-value>)",
-        "professional-navy": "oklch(var(--professional-navy) / <alpha-value>)",
-
-        background: "oklch(var(--background) / <alpha-value>)",
-        foreground: "oklch(var(--foreground) / <alpha-value>)",
-        card: "oklch(var(--card) / <alpha-value>)",
-        "card-foreground": "oklch(var(--card-foreground) / <alpha-value>)",
-        popover: "oklch(var(--popover) / <alpha-value>)",
-        "popover-foreground":
-          "oklch(var(--popover-foreground) / <alpha-value>)",
+        background: "var(--background)",
+        foreground: "var(--foreground)",
+        card: "var(--card)",
+        "card-foreground": "var(--card-foreground)",
+        popover: "var(--popover)",
+        "popover-foreground": "var(--popover-foreground)",
         primary: {
-          DEFAULT: "oklch(var(--primary) / <alpha-value>)",
-          foreground: "oklch(var(--primary-foreground) / <alpha-value>)",
+          DEFAULT: "var(--primary)",
+          foreground: "var(--primary-foreground)",
         },
         secondary: {
-          DEFAULT: "oklch(var(--secondary) / <alpha-value>)",
-          foreground: "oklch(var(--secondary-foreground) / <alpha-value>)",
-        },
-        destructive: {
-          DEFAULT: "oklch(var(--destructive) / <alpha-value>)",
-          foreground: "oklch(var(--destructive-foreground) / <alpha-value>)",
+          DEFAULT: "var(--secondary)",
+          foreground: "var(--secondary-foreground)",
         },
         muted: {
-          DEFAULT: "oklch(var(--muted) / <alpha-value>)",
-          foreground: "oklch(var(--muted-foreground) / <alpha-value>)",
+          DEFAULT: "var(--muted)",
+          foreground: "var(--muted-foreground)",
         },
         accent: {
-          DEFAULT: "oklch(var(--accent) / <alpha-value>)",
-          foreground: "oklch(var(--accent-foreground) / <alpha-value>)",
+          DEFAULT: "var(--accent)",
+          foreground: "var(--accent-foreground)",
         },
-        border: "oklch(var(--border) / <alpha-value>)",
-        input: "oklch(var(--input) / <alpha-value>)",
-        ring: "oklch(var(--ring) / <alpha-value>)",
-
-        sidebar: "oklch(var(--sidebar-background) / <alpha-value>)",
-        "sidebar-foreground":
-          "oklch(var(--sidebar-foreground) / <alpha-value>)",
-        "sidebar-primary": "oklch(var(--sidebar-primary) / <alpha-value>)",
-        "sidebar-primary-foreground":
-          "oklch(var(--sidebar-primary-foreground) / <alpha-value>)",
-        "sidebar-accent": "oklch(var(--sidebar-accent) / <alpha-value>)",
-        "sidebar-accent-foreground":
-          "oklch(var(--sidebar-accent-foreground) / <alpha-value>)",
-        "sidebar-border": "oklch(var(--sidebar-border) / <alpha-value>)",
-        "sidebar-ring": "oklch(var(--sidebar-ring) / <alpha-value>)",
-
-        "chart-1": "oklch(var(--chart-1) / <alpha-value>)",
-        "chart-2": "oklch(var(--chart-2) / <alpha-value>)",
-        "chart-3": "oklch(var(--chart-3) / <alpha-value>)",
-        "chart-4": "oklch(var(--chart-4) / <alpha-value>)",
-        "chart-5": "oklch(var(--chart-5) / <alpha-value>)",
-      },
-      borderColor: {
-        DEFAULT: "oklch(var(--border) / <alpha-value>)",
-      },
-      outlineColor: {
-        ring: "oklch(var(--ring) / <alpha-value>)",
+        destructive: {
+          DEFAULT: "var(--destructive)",
+          foreground: "var(--destructive-foreground)",
+        },
+        border: "var(--border)",
+        input: "var(--input)",
+        ring: "var(--ring)",
+        sidebar: "var(--sidebar-background)",
+        "sidebar-foreground": "var(--sidebar-foreground)",
+        "sidebar-primary": "var(--sidebar-primary)",
+        "sidebar-primary-foreground": "var(--sidebar-primary-foreground)",
+        "sidebar-accent": "var(--sidebar-accent)",
+        "sidebar-accent-foreground": "var(--sidebar-accent-foreground)",
+        "sidebar-border": "var(--sidebar-border)",
+        "sidebar-ring": "var(--sidebar-ring)",
+        "chart-1": "var(--chart-1)",
+        "chart-2": "var(--chart-2)",
+        "chart-3": "var(--chart-3)",
+        "chart-4": "var(--chart-4)",
+        "chart-5": "var(--chart-5)",
       },
       borderRadius: {
-        sm: "calc(var(--radius) - 4px)",
-        md: "calc(var(--radius) - 2px)",
-        lg: "var(--radius)",
-        xl: "calc(var(--radius) + 4px)",
+        sm: "var(--radius-sm)",
+        md: "var(--radius-md)",
+        lg: "var(--radius-lg)",
+        xl: "var(--radius-xl)",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       boxShadow: {
-        soft: "0 2px 10px oklch(var(--primary) / 0.1)",
-        medium: "0 8px 30px oklch(var(--primary) / 0.15)",
-        strong: "0 20px 40px oklch(var(--primary) / 0.2)",
-      },
-      backgroundImage: {
-        "gradient-hero": "var(--gradient-hero)",
-        "gradient-card": "var(--gradient-card)",
-        "gradient-trust": "var(--gradient-trust)",
-      },
-      transitionProperty: {
-        smooth: "var(--transition-smooth)",
-        bounce: "var(--transition-bounce)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
-        },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        soft: "0 2px 10px var(--primary)",
+        medium: "0 8px 30px var(--primary)",
+        strong: "0 20px 40px var(--primary)",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };
 
 export default config;
