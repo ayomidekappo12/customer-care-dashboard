@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  swcMinify: true, // Enables the faster SWC-based minifier
+  reactStrictMode: true,
   trailingSlash: true, // Optional: Adjust if needed
   output: "standalone",
 

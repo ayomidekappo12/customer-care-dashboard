@@ -1,20 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { SubBar } from "./SubBar";
+import { SubBar } from "@/app/dashboard/SubBar";
 import { TicketList } from "./TicketList";
+import type { Ticket } from "@/types/ticket"; // Adjust path if needed
 
-// Import the Ticket type if not already imported
-// import type { Ticket } from "./TicketList";
-
-const allTickets: {
-  id: string;
-  platform: string;
-  amount: string;
-  status: string;
-  messages: number;
-  priority: "urgent" | "warning" | "info";
-}[] = [
+const allTickets: Ticket[] = [
   {
     id: "PaxfulAgent001",
     platform: "Paxful",
@@ -22,6 +13,17 @@ const allTickets: {
     status: "urgent",
     messages: 5,
     priority: "urgent",
+    agent: "John Doe",
+    vendor: "Vendor X",
+    ticketId: "TCK-1001",
+    tradeLink: "https://example.com/trade/1001",
+    date: "2025-08-15",
+    timeline: [
+      { event: "Order created", time: "", status: "pending" },
+      { event: "Payment received", time: "", status: "pending" },
+      { event: "Trade in progress", time: "", status: "pending" },
+      { event: "Awaiting confirmation", time: "", status: "pending" },
+    ],
   },
   {
     id: "SpeedyPay",
@@ -30,6 +32,14 @@ const allTickets: {
     status: "warning",
     messages: 5,
     priority: "warning",
+    agent: "Jane Smith",
+    vendor: "Vendor Y",
+    ticketId: "TCK-1002",
+    tradeLink: "https://example.com/trade/1002",
+    date: "2025-08-14",
+    timeline: [
+      { event: "Order created", time: "", status: "Awaiting payment" },
+    ],
   },
   {
     id: "CryptoExchange",
@@ -38,6 +48,12 @@ const allTickets: {
     status: "info",
     messages: 3,
     priority: "info",
+    agent: "Alex Johnson",
+    vendor: "Vendor Z",
+    ticketId: "TCK-1003",
+    tradeLink: "https://example.com/trade/1003",
+    date: "2025-08-13",
+    timeline: [{ event: "Order created", time: "", status: "Trade completed" }],
   },
   {
     id: "QuickTrade",
@@ -46,6 +62,12 @@ const allTickets: {
     status: "warning",
     messages: 1,
     priority: "warning",
+    agent: "Maria Lopez",
+    vendor: "Vendor W",
+    ticketId: "TCK-1004",
+    tradeLink: "https://example.com/trade/1004",
+    date: "2025-08-12",
+    timeline: [{ event: "Order created", time: "", status: "Trade completed" }],
   },
   {
     id: "PaxfulAgent001",
@@ -54,6 +76,12 @@ const allTickets: {
     status: "urgent",
     messages: 8,
     priority: "urgent",
+    agent: "John Doe",
+    vendor: "Vendor X",
+    ticketId: "TCK-1005",
+    tradeLink: "https://example.com/trade/1005",
+    date: "2025-08-11",
+    timeline: [{ event: "Order created", time: "", status: "received" }],
   },
   {
     id: "Binance",
@@ -62,6 +90,12 @@ const allTickets: {
     status: "urgent",
     messages: 6,
     priority: "urgent",
+    agent: "Chris Evans",
+    vendor: "Vendor B",
+    ticketId: "TCK-1006",
+    tradeLink: "https://example.com/trade/1006",
+    date: "2025-08-10",
+    timeline: [{ event: "Order created", time: "", status: "Cancelled" }],
   },
 ];
 

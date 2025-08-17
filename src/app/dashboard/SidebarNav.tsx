@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -61,7 +62,15 @@ const SidebarNav = () => {
         {!collapsed && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-sidebar font-bold text-sm">B</span>
+              <Image
+                src={`https://res.cloudinary.com/dxvf9uqwe/image/upload/v1755263363/image_35_pafzfb.png`}
+                alt="Logo"
+                width={50}
+                height={50}
+                className="brightness-110 contrast-125"
+                quality={90}
+                priority
+              />
             </div>
             <span className="text-sidebar-foreground font-semibold text-lg">
               BIBUAIN

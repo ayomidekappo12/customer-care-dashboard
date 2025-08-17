@@ -10,7 +10,7 @@ interface SessionData {
 async function getSession() {
   return await getIronSession<SessionData>(await cookies(), {
     password: `${process.env.SESSION_SECRET}`,
-    cookieName: "TULIP-COOKIE-MONSTER",
+    cookieName: "",
     cookieOptions: {
       httpOnly: false,
       secure: false,

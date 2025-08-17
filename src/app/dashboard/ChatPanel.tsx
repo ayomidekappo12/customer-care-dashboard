@@ -4,6 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { TradeActionDialog } from "@/components/TradeActionDialog";
+import { cancelReasons, reassignReasons } from "@/types/tradeOptions";
+import { toast } from "sonner";
 import {
   Send,
   Paperclip,
@@ -20,8 +24,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Ticket, TicketStatus } from "@/types/ticket";
-
 
 interface ChatMessage {
   id: string;
@@ -30,7 +39,6 @@ interface ChatMessage {
   timestamp: string;
   senderName?: string;
 }
-
 
 const mockMessages: ChatMessage[] = [
   {
@@ -59,15 +67,51 @@ const statusStyles: Record<TicketStatus, string> = {
   dispute: "bg-gray-100 text-gray-600",
 };
 
-export function ChatInterface({ ticket }: { ticket: Ticket }) {
+export function ChatInterface({
+  ticket,
+  openTradeDetails,
+  setOpenTradeDetails,
+  isDesktop,
+}: {
+  ticket: Ticket;
+  openTradeDetails: boolean;
+  setOpenTradeDetails: (open: boolean) => void;
+  isDesktop: boolean;
+}) {
   const [message, setMessage] = useState("");
-  const [messages] = useState<ChatMessage[]>(mockMessages);
+  const messages = mockMessages;
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [reassignDialogOpen, setReassignDialogOpen] = useState(false);
+  const normalizedStatus = ticket.status.toLowerCase() as TicketStatus;
+
+  const handleCancelTrade = (reason: string, note: string) => {
+    setTimeout(() => {
+      toast.success("Trade Cancelled", {
+        description: (
+          <span style={{ color: "#1e2740" }}>
+            Trade cancelled. Reason: {reason}
+            {note && `. Note: ${note}`}
+          </span>
+        ),
+      });
+    }, 1000);
+  };
+
+  const handleReassignTrade = (reason: string, note: string) => {
+    setTimeout(() => {
+      toast.success("Trade Reassigned", {
+        description: `Trade reassigned. Reason: ${reason}${
+          note ? `. Note: ${note}` : ""
+        }`,
+      });
+    }, 0);
+  };
 
   return (
     <div className="flex h-full">
-      {/* Left: Chat Section */}
+      {/* Chat Section */}
       <div className="flex flex-col flex-1">
-        {/* ---------- Chat Header ---------- */}
+        {/* Chat Header */}
         <div className="flex items-center justify-between gap-4 border rounded-sm py-5 px-2.5 bg-white">
           {/* Agent Info */}
           <div className="flex flex-col gap-1">
@@ -75,9 +119,7 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
               <span className="font-medium text-sm">{ticket.agent}</span>
               <Badge
                 variant="secondary"
-                className={`${
-                  statusStyles[ticket.status]
-                } font-medium px-2 py-0.5 rounded-full text-xs capitalize`}
+                className={`${statusStyles[normalizedStatus]} font-medium px-2 py-0.5 rounded-full text-xs capitalize`}
               >
                 {ticket.status}
               </Badge>
@@ -89,7 +131,7 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
           <div className="flex items-center justify-evenly gap-4">
             <div className="flex items-center gap-3">
               <div className="flex flex-col items-start text-sm text-muted-foreground">
-                <div className="flex">
+                <div className="flex gap-1">
                   <span>Ticket ID:</span>
                   <span>{ticket.ticketId}</span>
                   <span>• {ticket.date}</span>
@@ -98,52 +140,59 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
                   Trade Link: {ticket.tradeLink}
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-sm  text-muted-foreground mb-3.5 pb-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3.5 pb-1">
                 <Clock className="h-4 w-4" />
                 <span>Opened {ticket.openedAgo}</span>
               </div>
             </div>
+          </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    Actions
-                    <ChevronDown className="h-4 w-4 ml-1.5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48 bg-white">
-                  <DropdownMenuItem className="text-[#16a34a]">
-                    <Check className="h-4 w-4 mr-2 text-[var(--success)]" />
-                    Mark as Resolved
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-[#f6b10a]">
-                    <ArrowRight className="h-4 w-4 mr-2 text-[var(--primary)]" />
-                    Forward to Admin
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-[#fe251a]">
-                    <X className="h-4 w-4 mr-2 text-[var(--destructive)]" />
-                    Cancel Trade
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <UserRoundCheck className="h-4 w-4 mr-2" />
-                    Reassign Trade
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <Button
-                size="sm"
-                variant="default"
-                className="cursor-pointer text-xs"
-              >
-                Trade Details
-              </Button>
-            </div>
+          {/* Controls */}
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Actions
+                  <ChevronDown className="h-4 w-4 ml-1.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-white">
+                <DropdownMenuItem className="text-[#16a34a]">
+                  <Check className="h-4 w-4 mr-2 text-[var(--success)]" />
+                  Mark as Resolved
+                </DropdownMenuItem>
+                <DropdownMenuItem className="text-[#f6b10a]">
+                  <ArrowRight className="h-4 w-4 mr-2 text-[var(--primary)]" />
+                  Forward to Admin
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="text-[#fe251a]"
+                  onClick={() => setCancelDialogOpen(true)}
+                >
+                  <X className="h-4 w-4 mr-2 text-[var(--destructive)]" />
+                  Cancel Trade
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setReassignDialogOpen(true)}>
+                  <UserRoundCheck className="h-4 w-4 mr-2" />
+                  Reassign Trade
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* One unified Trade Details button */}
+            <Button
+              size="sm"
+              variant="default"
+              onClick={() =>
+                setOpenTradeDetails(isDesktop ? !openTradeDetails : true)
+              }
+            >
+              Trade Details
+            </Button>
           </div>
         </div>
 
-        {/* ---------- Messages ---------- */}
+        {/* Chat Messages */}
         <div className="flex-1 p-4 space-y-4 overflow-y-auto">
           {messages.map((msg) => (
             <div
@@ -166,10 +215,7 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
                 >
                   {msg.senderName}
                 </div>
-
                 <div className="text-sm">{msg.message}</div>
-
-                {/* Timestamp aligned to the right */}
                 <div
                   className={`text-xs mt-1 self-end ${
                     msg.sender === "customer"
@@ -184,18 +230,18 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
           ))}
         </div>
 
-        {/* ---------- Message Input ---------- */}
+        {/* Message Input */}
         <div className="border-t p-4">
           <div className="flex space-x-2">
             <Textarea
               placeholder="Type your message..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring h-[80px]"
+              className="flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm h-[80px]"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey && message.trim()) {
-                  e.preventDefault(); // prevents new line
-                  // handle send
+                  e.preventDefault();
+                  // handle send here
                   setMessage("");
                 }
               }}
@@ -203,10 +249,7 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
             <Button variant="ghost" size="sm">
               <Paperclip className="h-4 w-4 cursor-pointer" />
             </Button>
-            <Button
-              size="sm"
-              className="bg-primary hover:bg-primary-hover cursor-pointer"
-            >
+            <Button size="sm" className="bg-primary hover:bg-primary-hover">
               <Send className="h-4 w-4" />
             </Button>
           </div>
@@ -216,7 +259,79 @@ export function ChatInterface({ ticket }: { ticket: Ticket }) {
         </div>
       </div>
 
-      {/* Right: Trade Details Panel (TODO) */}
+      {/* Mobile Sheet */}
+      {!isDesktop && (
+        <Sheet open={openTradeDetails} onOpenChange={setOpenTradeDetails}>
+          <SheetContent
+            side="left"
+            className="!max-w-sm w-full pt-4 flex flex-col items-start"
+          >
+            <SheetHeader className="w-full">
+              <SheetTitle className="text-lg font-semibold">
+                Trade Details
+              </SheetTitle>
+            </SheetHeader>
+            <TradeDetailsContent ticket={ticket} />
+          </SheetContent>
+        </Sheet>
+      )}
+      {/* Cancel Trade Dialog */}
+      <TradeActionDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        title="Cancel Trade"
+        options={cancelReasons}
+        confirmLabel="Confirm Cancel"
+        onConfirm={handleCancelTrade}
+      />
+
+      {/* Reassign Trade Dialog */}
+      <TradeActionDialog
+        open={reassignDialogOpen}
+        onOpenChange={setReassignDialogOpen}
+        title="Reassign Trade"
+        options={reassignReasons}
+        confirmLabel="Confirm Reassign"
+        onConfirm={handleReassignTrade}
+      />
     </div>
+  );
+}
+
+export function TradeDetailsContent({ ticket }: { ticket: Ticket }) {
+  return (
+    <>
+      <div className="mt-4 flex flex-col items-start space-y-3 text-sm w-full">
+        <div className="flex justify-between items-center w-full">
+          <span className="text-muted-foreground">Ticket ID</span>
+          <span className="font-medium">{ticket.ticketId}</span>
+        </div>
+        <div className="flex justify-between items-center w-full">
+          <span className="text-muted-foreground">Vendor</span>
+          <span className="font-medium">{ticket.vendor}</span>
+        </div>
+      </div>
+
+      <Separator className="my-4 w-full" />
+
+      <div className="flex flex-col items-start w-full">
+        <h4 className="font-medium mb-3">Timeline</h4>
+        <div className="relative border-l border-border pl-4 space-y-4 w-full">
+          {ticket.timeline?.map((event, index) => (
+            <div key={index} className="relative">
+              <div
+                className={`absolute -left-6 w-3 h-3 rounded-full ${
+                  event.status === "completed" ? "bg-success" : "bg-primary"
+                }`}
+              />
+              <div>
+                <p className="text-sm font-medium">{event.event}</p>
+                <p className="text-xs text-muted-foreground">{event.time}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
