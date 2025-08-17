@@ -12,13 +12,13 @@ export const api = axios.create({
 });
 
 // utils/debug.ts
-export const debugLog = (...args: any[]) => {
+export const debugLog = (...args: unknown[]) => {
   if (process.env.NODE_ENV === "development") {
     console.log(...args);
   }
 };
 
-export const debugError = (...args: any[]) => {
+export const debugError = (...args: unknown[]) => {
   if (process.env.NODE_ENV === "development") {
     console.error(...args);
   }
@@ -37,10 +37,14 @@ export const fetcher = async (url: string) => {
   return api
     .get(url, config)
     .then((res) => res.data)
-    .catch((exception: any) => {
-      const error = new Error(exception.message);
-      error.message = exception.detail;
-      error.cause = exception.code;
-      throw error;
+    .catch((exception: unknown) => {
+      if (axios.isAxiosError(exception)) {
+        const error = new Error(exception.message);
+        (error as any).message =
+          exception.response?.data?.detail ?? exception.message;
+        (error as any).cause = exception.response?.status;
+        throw error;
+      }
+      throw exception;
     });
 };

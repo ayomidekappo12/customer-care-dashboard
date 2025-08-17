@@ -1,14 +1,20 @@
 import { useContext, createContext, ReactNode } from "react";
 
-const ErrorHandlerContext = createContext<((error: any) => void) | undefined>(undefined);
+interface AppError {
+  code?: number;
+  message: string;
+}
+
+const ErrorHandlerContext = createContext<
+  ((error: AppError) => void) | undefined
+>(undefined);
 
 interface ErrorHandlerProviderProps {
   children?: ReactNode;
 }
 
 export const ErrorProvider = ({ children }: ErrorHandlerProviderProps) => {
-
-  const handleError = (error: any) => {
+  const handleError = (error: AppError) => {
     console.log(error.message);
 
     if (error.code === 401) {
