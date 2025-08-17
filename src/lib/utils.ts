@@ -24,6 +24,12 @@ export const debugError = (...args: unknown[]) => {
   }
 };
 
+// Define a custom error interface
+interface ApiError extends Error {
+  status?: number;
+  details?: string;
+}
+
 export const fetcher = async (url: string) => {
   const token = JSON.parse(await getSessionData()).aut;
   const config = token
@@ -39,10 +45,14 @@ export const fetcher = async (url: string) => {
     .then((res) => res.data)
     .catch((exception: unknown) => {
       if (axios.isAxiosError(exception)) {
-        const error = new Error(exception.message);
-        (error as any).message =
-          exception.response?.data?.detail ?? exception.message;
-        (error as any).cause = exception.response?.status;
+        // Create custom error object
+        const error: ApiError = new Error(
+          exception.response?.data?.detail ?? exception.message
+        );
+
+        // Add status code to error object
+        error.status = exception.response?.status;
+
         throw error;
       }
       throw exception;
